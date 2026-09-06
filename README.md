@@ -9,9 +9,12 @@ Without AI, as God intended.
 - GLFW
 - gcc
 - make
+- cmake
 
 ## Compiling
 
 ```bash
+mkdir build
 cd build
-./build.sh
+cmake ..
+make
