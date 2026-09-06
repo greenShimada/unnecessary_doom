@@ -10,6 +10,7 @@ include_directories(include)
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(SRC
     src/main.cpp
     src/gl.c
