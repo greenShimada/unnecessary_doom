@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/rocky/Dev/unnecessary_doom/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

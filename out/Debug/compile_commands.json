@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/rocky/Dev/unnecessary_doom/out/Debug",
+  "command": "/usr/bin/c++  -I/home/rocky/Dev/unnecessary_doom/include -g -std=gnu++17 -Wall -Wextra -o CMakeFiles/doom_game.dir/src/main.cpp.o -c /home/rocky/Dev/unnecessary_doom/src/main.cpp",
+  "file": "/home/rocky/Dev/unnecessary_doom/src/main.cpp",
+  "output": "CMakeFiles/doom_game.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/rocky/Dev/unnecessary_doom/out/Debug",
+  "command": "/usr/bin/cc  -I/home/rocky/Dev/unnecessary_doom/include -g -std=gnu99 -Wall -Wextra -o CMakeFiles/doom_game.dir/src/gl.c.o -c /home/rocky/Dev/unnecessary_doom/src/gl.c",
+  "file": "/home/rocky/Dev/unnecessary_doom/src/gl.c",
+  "output": "CMakeFiles/doom_game.dir/src/gl.c.o"
+}
+]

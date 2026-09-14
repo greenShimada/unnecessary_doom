@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/doom_game.dir/link.d CMakeFiles/doom_game.dir/src/main.cpp.o CMakeFiles/doom_game.dir/src/gl.c.o -o doom_game  /usr/lib/libglfw.so.3.5 /usr/lib/libGL.so -ldl -lm
