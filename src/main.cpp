@@ -80,6 +80,8 @@ int main() {
 
 		shader.use();
 
+		shader.setFloat("horizontalOffset", 0.5f);
+
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
