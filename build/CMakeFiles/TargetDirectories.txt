@@ -1,3 +1,0 @@
-/home/rocky/Dev/unnecessary_doom/build/CMakeFiles/doom_game.dir
-/home/rocky/Dev/unnecessary_doom/build/CMakeFiles/edit_cache.dir
-/home/rocky/Dev/unnecessary_doom/build/CMakeFiles/rebuild_cache.dir

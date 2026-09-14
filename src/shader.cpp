@@ -1,6 +1,6 @@
 #include "../include/doom/shader.h"
 
-Shader(const char* vertexPath. const char* fragmentPath)
+Shader(const char* vertexPath, const char* fragmentPath)
 {
 	std::string vertexCode;
 	std::string fragmentCode;
