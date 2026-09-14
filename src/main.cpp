@@ -5,8 +5,9 @@
 #include <cstdio>
 
 #include "stb/stb_image.h"
-
 #include "../include/doom/shader.h"
+
+#include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *);
@@ -47,10 +48,10 @@ int main() {
 	float vertices[] = 
 	{
 		// Position		// Color		// Texture coords
-		0.5f, 0.5f, 0.0f,	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
-		0.5f, -0.5f, 0.0f,	0.0f, 1.0f, 0.0f, 	1.0f, 0.0f,
+		0.5f, 0.5f, 0.0f,	1.0f, 0.0f, 0.0f,	2.0f, 2.0f,
+		0.5f, -0.5f, 0.0f,	0.0f, 1.0f, 0.0f, 	2.0f, 0.0f,
 		-0.5f, -0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f, 	1.0f, 1.0f, 0.0f,	0.0f, 1.0f	
+		-0.5f, 0.5f, 0.0f, 	1.0f, 1.0f, 0.0f,	0.0f, 2.0f	
 	};
 
 	unsigned int indices[] =
@@ -89,29 +90,24 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	float texCoords[] = 
-	{
-		0.0f, 0.0f, 	// Lower-left corner
-		1.0f, 0.0f, 	// Lower-right corner
-		0.5f, 1.0f 	// Top-center corner
-	};
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+	unsigned int texture1, texture2;
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true);
 	unsigned char *data = stbi_load("resources/textures/container.jpg", &width, &height, &nrChannels, 0);
-
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
 	if(data) 
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -120,12 +116,34 @@ int main() {
 	{
 		std::cout << "Failed to load texture" << std::endl;
 	}
+	stbi_image_free(data);
 
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+
+	data = stbi_load("resources/textures/awesomeface.png", &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+    	{
+	    	std::cout << "Failed to load texture" << std::endl;
+	}
 	stbi_image_free(data);
 
 	shader.use();
 
-	glUniform1i(glGetUniformLocation(shader.ID, "texture"), 0);
+	glUniform1i(glGetUniformLocation(shader.ID, "texture1"), 0);
+	shader.setInt("texture2", 1);
 	
 	// game loop
 	while (!glfwWindowShouldClose(window)) {
@@ -138,7 +156,10 @@ int main() {
 		//shader.setFloat("horizontalOffset", 0.5f);
 	
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		shader.use();
 		glBindVertexArray(VAO);
