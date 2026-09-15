@@ -1,3 +1,5 @@
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/ext/vector_float3.hpp>
 #define GLFW_INCLUDE_NONE
 #define STB_IMAGE_IMPLEMENTATION
 //#include <glad/gl.h>
@@ -6,6 +8,10 @@
 
 #include "stb/stb_image.h"
 #include "../include/doom/shader.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 
@@ -141,8 +147,9 @@ int main() {
 	stbi_image_free(data);
 
 	shader.use();
+	
 
-	glUniform1i(glGetUniformLocation(shader.ID, "texture1"), 0);
+	shader.setInt("texture1", 0);
 	shader.setInt("texture2", 1);
 	
 	// game loop
@@ -161,7 +168,15 @@ int main() {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+		transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
 		shader.use();
+		
+		unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
