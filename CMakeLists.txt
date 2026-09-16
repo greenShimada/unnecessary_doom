@@ -18,4 +18,6 @@ set(SRC
 
 add_executable(doom_game ${SRC})
 
+target_compile_definitions(doom_game PRIVATE ROOT_DIR="${CMAKE_SOURCE_DIR}")
+
 target_link_libraries(doom_game PRIVATE glfw OpenGL::GL dl m)
