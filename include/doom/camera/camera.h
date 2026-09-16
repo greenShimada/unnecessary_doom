@@ -57,6 +57,7 @@ class Camera {
 	{
 		return glm::lookAt(Position, Position + Front, Up);
 	}
+
 }
 
 #endif
