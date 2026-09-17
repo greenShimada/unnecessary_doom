@@ -11,6 +11,7 @@
 
 #include "stb/stb_image.h"
 #include "../include/doom/shader.h"
+#include "../include/doom/camera/camera.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -26,20 +27,15 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-glm::vec3 cameraPos 	= glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront 	= glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp 	= glm::vec3(0.0f, 1.0f, 0.0f);
-
 // Camera
 bool firstMouse = true;
-float yaw 	= -90.0f;
-float pitch	= 0.0f;
 float lastX	= 800.0f / 2.0;
 float lastY	= 600.0 / 2.0;
-float fov 	= 45.0f;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 int main() {
 
@@ -248,8 +244,6 @@ int main() {
 
 		glClearColor(0.3f, 0.5f, 0.25f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		//shader.setFloat("horizontalOffset", 0.5f);
 	
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
@@ -267,12 +261,12 @@ int main() {
 		transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
 		transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-		//model = glm::rotate(model,(float) glfwGetTime() * glm::radians(-55.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-		projection = glm::perspective(glm::radians(fov), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f, 100.0f);
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		model = glm::rotate(model,(float) glfwGetTime() * glm::radians(-55.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f, 100.0f);
 		shader.setMat4("projection", projection);
 	
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		view = camera.GetViewMatrix();
 		shader.setMat4("view", view);
 
 		unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
@@ -313,16 +307,20 @@ void processInput(GLFWwindow *window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
+	Camera_Movement dir = IDDLE;
+
 	// Camera Move
-	float cameraSpeed = static_cast<float>(2.5f * deltaTime);
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPos += cameraSpeed * cameraFront;
+		dir = FORWARD;
 	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPos -= cameraSpeed * cameraFront;
+		dir = BACKWARD;
 	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		dir = LEFT;
 	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		dir = RIGHT;
+	
+	if(dir != IDDLE)
+		camera.ProcessKeyboard(dir, deltaTime);
 }
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
@@ -344,32 +342,12 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	lastX = xpos;
 	lastY = ypos;
 
-	const float sensivity = 0.1f;
-	xoffset *= sensivity;
-	yoffset *= sensivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-
-	glm::vec3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(front);
+	camera.ProcessMouseInput(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	fov -= (float)yoffset;
-	if (fov < 1.0f)
-		fov = 1.0f;
-	if (fov > 45.0f)
-		fov = 45.0f;
+	camera.ProcessMouseScroll(yoffset);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
