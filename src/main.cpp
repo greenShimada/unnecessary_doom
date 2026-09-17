@@ -1,6 +1,7 @@
 #include <doom/header.h>
 #include <doom/shader.h>
-#include <doom/window.h>
+#include <doom/window.hpp>
+#include <doom/file.hpp>
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -19,7 +20,12 @@ float lastFrame = 0.0f;
 
 int main() {
   Window window("Unecessary DOOM");
-  Shader shader("assets/shaders/shader.vs", "assets/shaders/shader.fs");
+  Files files;
+  std::string vertexShaderPath = std::string(files.c_shaders()) + "/shader.vs";
+  std::string fragmentShaderPath =
+      std::string(files.c_shaders()) + "/shader.fs";
+
+  Shader shader(vertexShaderPath.c_str(), fragmentShaderPath.c_str());
 
   glEnable(GL_DEPTH_TEST);
   float vertices[] = {
@@ -94,8 +100,9 @@ int main() {
 
   int width, height, nrChannels;
   stbi_set_flip_vertically_on_load(true);
-  unsigned char* data = stbi_load("resources/textures/container.jpg", &width,
-                                  &height, &nrChannels, 0);
+  std::string containerPath = std::string(files.c_texture()) + "container.jpg";
+  unsigned char* data =
+      stbi_load(containerPath.c_str(), &width, &height, &nrChannels, 0);
   if (data) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
                  GL_UNSIGNED_BYTE, data);
@@ -113,9 +120,9 @@ int main() {
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-  data = stbi_load("resources/textures/awesomeface.png", &width, &height,
-                   &nrChannels, 0);
+  std::string awesomefacePath =
+      std::string(files.c_texture()) + "awesomeface.png";
+  data = stbi_load(awesomefacePath.c_str(), &width, &height, &nrChannels, 0);
   if (data) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
                  GL_UNSIGNED_BYTE, data);

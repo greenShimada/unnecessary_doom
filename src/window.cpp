@@ -1,4 +1,4 @@
-#include <doom/window.h>
+#include <doom/window.hpp>
 #include <stdexcept>
 
 Window::Window(const char* title) {

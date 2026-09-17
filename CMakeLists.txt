@@ -16,6 +16,7 @@ set(SRC
     src/gl.c 
     src/window.cpp
     src/stb_image.cpp
+    src/file.cpp
 )
 
 add_executable(doom_game ${SRC})
