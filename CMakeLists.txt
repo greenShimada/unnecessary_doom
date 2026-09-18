@@ -17,6 +17,7 @@ set(SRC
     src/texture.cpp
     src/game.cpp
     src/resource_manager.cpp
+    src/sprite_renderer.cpp
     src/gl.c
     src/stb_image.cpp
 )
