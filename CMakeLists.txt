@@ -13,10 +13,17 @@ find_package(OpenGL REQUIRED)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(SRC
     src/main.cpp
-    src/gl.c 
-    src/window.cpp
+    src/shader.cpp
+    src/texture.cpp
+    src/game.cpp
+    src/resource_manager.cpp
+    src/sprite_renderer.cpp
+    src/gl.c
     src/stb_image.cpp
     src/file.cpp
+    src/window.cpp
+    src/file.cpp
+    src/window.cpp
 )
 
 add_executable(doom_game ${SRC})

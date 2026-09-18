@@ -1,4 +1,5 @@
 #include <doom/window.hpp>
+#include <GLFW/glfw3.h>
 #include <stdexcept>
 
 Window::Window(const char* title) {
@@ -11,16 +12,14 @@ Window::Window(const char* title) {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-  window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, title, NULL, NULL);
+  window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, title, NULL, NULL);
   if (!window) {
     glfwTerminate();
     throw std::runtime_error("Falha ao criar janela");
   }
   glfwMakeContextCurrent(window);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-  glfwSetCursorPosCallback(window, mouse_callback);
-  glfwSetScrollCallback(window, scroll_callback);
-
+  glfwSetKeyCallback(window, key_callback);
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   if (!gladLoaderLoadGL()) {
     glfwTerminate();
